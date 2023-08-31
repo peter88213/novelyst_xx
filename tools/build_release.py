@@ -10,10 +10,17 @@ import os
 from shutil import copyfile
 import msgfmt
 import zipfile
+from settings import *
+import set_up
 
 
-def main(languageCode):
-    print(f'Build a novelyst language pack for {languageCode}')
+def main():
+    print(f'Build a novelyst language pack for {languageName}.')
+
+    # Check whether tranlsations are complete.
+    if not set_up.main():
+        print('PROGRAM ABORTED. Please complete translations.')
+        return False
 
     # Create the target path.
     i18Path = f'../i18n/locale/{languageCode}/LC_MESSAGES'
@@ -41,7 +48,8 @@ def main(languageCode):
             release.write(file, compress_type=zipfile.ZIP_DEFLATED)
 
     print('Done.')
+    return True
 
 
 if __name__ == '__main__':
-    main('xx')
+    main()

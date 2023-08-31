@@ -1,24 +1,5 @@
 """Provide a class to handle GNU gettext translation files.
 
-This module can be used as a standalone script.
-
-Usage: 
-translations.py language-code
-
-File structure:
-
-├── PyWriter/
-│   ├── i18n/
-│   │   └── <language>.json
-│   └── src/
-│       └── translations.py
-└── <project>/
-    ├── i18n/ 
-    │   ├── messages.pot
-    │   └── <language>.po
-    └── tools/
-        └── <calling script>
-
 Copyright (c) 2023 Peter Triesberger
 For further information see https://github.com/peter88213/PyWriter
 Published under the MIT License (https://opensource.org/licenses/mit-license.php)
@@ -26,24 +7,24 @@ Published under the MIT License (https://opensource.org/licenses/mit-license.php
 
 import sys
 import os
-import json
 from string import Template
 from datetime import datetime
+from settings import *
 
 POT_PATH = '../i18n'
 JSON_PATH = '../../PyWriter/i18n'
 
 poHeader = '''\
-# ${app} Dictionary (English-German)
-# Copyright (C) 2022 Peter Triesberger
+# ${app} Dictionary (English-${languageName})
+# Copyright (C) 2023 Peter Triesberger
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: ${appVersion}\\n"
+${version_id}
 ${pot_creation}
 "PO-Revision-Date: ${datetime}\\n"
-"Last-Translator: Peter Triesberger\\n"
-"Language: de\\n"
+"Last-Translator: ${translator}\\n"
+"Language: ${languageCode}\\n"
 "MIME-Version: 1.0\\n"
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
@@ -61,15 +42,13 @@ class Translations:
     - The JSON dictionary is updated by translations found in the initial '.po' file.
     """
 
-    def __init__(self, languageCode, app='', appVersion='unknown', potFile='messages.pot'):
-        self.poFile = f'{POT_PATH}/{languageCode}.po'
-        self.potFile = f'{POT_PATH}/{potFile}'
-        self.lngFile = f'{JSON_PATH}/{languageCode}.json'
+    def __init__(self, potPath, app=''):
+        self.poFile = f'{potPath}/{languageCode}.po'
+        self.potFile = f'{potPath}/messages.pot'
         self.msgDict = {}
         self.msgList = []
         self.header = ''
         self.app = app
-        self.appVersion = appVersion
         self.currentDateTime = datetime.today().replace(microsecond=0).isoformat(sep=" ")
         self.potCreation = f'"POT-Creation-Date: {self.currentDateTime}\\n"'
 
@@ -90,6 +69,9 @@ class Translations:
             elif inHeader:
                 if line.startswith('"POT-Creation-Date'):
                     self.potCreation = line
+                elif line.startswith('"Project-Id-Version'):
+                    self.versionId = line
+                    self.potCreation = line
                 elif line.startswith('msgid "'):
                     inHeader = False
             if not inHeader:
@@ -99,55 +81,6 @@ class Translations:
             self.msgList.sort()
         print(f'{msgCount} entries read.')
 
-    def read_json(self):
-        """Read a JSON translation file and add the translations to msgDict.
-        
-        Return True in case of success.
-        Return False, if the file cannot be read. 
-        """
-        try:
-            with open(self.lngFile, 'r', encoding='utf-8') as f:
-                print(f'Reading "{self.lngFile}" ...')
-                msgDict = json.load(f)
-            for message in msgDict:
-                self.msgDict[message] = msgDict[message]
-            print(f'{len(self.msgDict)} translations total.')
-            return True
-
-        except Exception as ex:
-            print(ex)
-            return False
-
-    def write_json(self):
-        """Add translations to a JSON translation file.
-        
-        Create a backup file.
-        Return True in case of success.
-        Return False, if the file cannot be written. 
-        """
-        if os.path.isfile(self.lngFile):
-            os.replace(self.lngFile, f'{self.lngFile}.bak')
-            backedUp = True
-        else:
-            backedUp = False
-        try:
-            with open(self.lngFile, 'w', encoding='utf-8') as f:
-                print(f'Writing "{self.lngFile}" ...')
-                msgDict = {}
-                # dict for non-empty entries
-                for msg in self.msgDict:
-                    if self.msgDict[msg]:
-                        msgDict[msg] = self.msgDict[msg]
-                json.dump(msgDict, f, ensure_ascii=False, sort_keys=True, indent=2)
-                print(f'{len(self.msgDict)} translations written.')
-            return True
-
-        except Exception as ex:
-            if backedUp:
-                os.replace(f'{self.lngFile}.bak', self.lngFile)
-            print(f'ERROR: Cannot write file: "{self.lngFile}".\n{ex}')
-            return False
-
     def read_po(self):
         """Read the existing translations of the '.po' file.
         
@@ -156,9 +89,12 @@ class Translations:
 
         # Create the header.
         msgMap = {'app': self.app,
-                  'appVersion': self.appVersion,
                   'datetime':self.currentDateTime,
                   'pot_creation': self.potCreation,
+                  'version_id': self.versionId,
+                  'languageName': languageName,
+                  'languageCode': languageCode,
+                  'translator': translator,
                   }
         hdTemplate = Template(poHeader)
         self.header = hdTemplate.safe_substitute(msgMap)
@@ -239,25 +175,17 @@ class Translations:
         return message
 
 
-def main(languageCode, app='', appVersion='unknown', potFile='messages.pot', json=False):
+def main(potPath, app='', appVersion='unknown'):
     """Update a '.po' translation file.
     
     - Add missing entries from the '.pot' template file.
     
-    If json is True:
-    - Add missing translations from the JSON dictionary to the '.po' file.
-    - Update the JSON dictionary from the '.po' file.
-    
     Return True, if all messages have translations.
     Return False, if messages need to be translated. 
     """
-    translations = Translations(languageCode, app, appVersion, potFile)
-    if json:
-        translations.read_json()
+    translations = Translations(potPath, app)
     translations.read_pot()
     translations.read_po()
-    if json:
-        translations.write_json()
     if translations.write_po():
         return True
     else:
@@ -265,5 +193,4 @@ def main(languageCode, app='', appVersion='unknown', potFile='messages.pot', jso
 
 
 if __name__ == '__main__':
-    if not main(sys.argv[1]):
-        sys.exit(1)
+    main()
