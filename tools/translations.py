@@ -15,14 +15,14 @@ JSON_PATH = '../../PyWriter/i18n'
 
 poHeader = '''\
 # ${app} Dictionary (English-${languageName})
-# Copyright (C) 2023 ${translator}
+# Copyright (C) 2023 ${provider}
 #
 msgid ""
 msgstr ""
 ${version_id}
 ${pot_creation}
 "PO-Revision-Date: ${datetime}\\n"
-"Last-Translator: ${translator}\\n"
+"Last-Translator: ${lastTranslator}\\n"
 "Language: ${languageCode}\\n"
 "MIME-Version: 1.0\\n"
 "Content-Type: text/plain; charset=UTF-8\\n"
@@ -92,7 +92,8 @@ class Translations:
                   'version_id': self.versionId,
                   'languageName': languageName,
                   'languageCode': languageCode,
-                  'translator': translator,
+                  'provider': provider,
+                  'lastTranslator': lastTranslator,
                   }
         hdTemplate = Template(poHeader)
         self.header = hdTemplate.safe_substitute(msgMap)

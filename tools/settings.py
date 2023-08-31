@@ -6,7 +6,10 @@ languageName = 'Vulcanian'
 languageCode = 'xx'
 # the language code according to ISO 639-1
 
-translator = "T'Pol t_pol@enterprise.starfleet"
+provider = "T'Pol t_pol@enterprise.starfleet"
 # the name of the translation's provider
 
-__all__ = ['languageName', 'languageCode', 'translator']
+lastTranslator = "T'Pol t_pol@enterprise.starfleet"
+# the name of the last translator
+
+__all__ = ['languageName', 'languageCode', 'provider', 'lastTranslator']
