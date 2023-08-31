@@ -1,9 +1,10 @@
 """Build a novelyst language pack.
 
 - Generate the language specific '*.mo' dictionaries for novelyst and its plugins.
+- Create a zipfile for distribution.
 
 Copyright (c) 2023 Peter Triesberger
-For further information see https://github.com/peter88213/novelyst_xx
+For further information see https://github.com/peter88213/novelyst
 License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import os
