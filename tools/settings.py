@@ -1,9 +1,12 @@
-"""Language pack settings 
+"""Language pack settings"""
 
-"""
+languageName = 'Vulcanian'
+# the name of the language
 
-languageName = 'Volcanian'
 languageCode = 'xx'
-translator = "T'Pol"
+# the language code according to ISO 639-1
 
-__all__ = ['languageName','languageCode','translator']
+translator = "T'Pol t_pol@enterprise.starfleet"
+# the name of the translation's provider
+
+__all__ = ['languageName', 'languageCode', 'translator']
