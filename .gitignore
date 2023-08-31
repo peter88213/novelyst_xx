@@ -2,5 +2,5 @@
 .project
 *.pyc
 *.bak
-build/
+i18n/
 
