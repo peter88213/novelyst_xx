@@ -1,0 +1,81 @@
+# novelyst_collection Dictionary
+# Copyright (C) 2022 Peter Triesberger
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 4.3.8\n"
+"POT-Creation-Date: 2023-07-11 21:11:59\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: LANGUAGE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: PyWriter pgettext.py 0.3\n"
+
+
+msgid "Add"
+msgstr ""
+
+msgid "Add current project to the collection"
+msgstr ""
+
+msgid "Book"
+msgstr ""
+
+msgid "Can not parse file"
+msgstr ""
+
+msgid "Can not process file"
+msgstr ""
+
+msgid "Cannot overwrite file"
+msgstr ""
+
+msgid "Cannot write file"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Collection"
+msgstr ""
+
+msgid "Collection plugin Online help"
+msgstr ""
+
+msgid "Exit"
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "No collection found in file"
+msgstr ""
+
+msgid "Open..."
+msgstr ""
+
+msgid "Remove selected book from the collection"
+msgstr ""
+
+msgid "Remove selected series and books"
+msgstr ""
+
+msgid "Remove selected series but keep the books"
+msgstr ""
+
+msgid "Series"
+msgstr ""
+
+msgid "Untitled collection"
+msgstr ""
+
+msgid "Update book data from the current project"
+msgstr ""
+
+msgid "novelyst collection"
+msgstr ""
