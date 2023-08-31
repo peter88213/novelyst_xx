@@ -70,7 +70,6 @@ class Translations:
                     self.potCreation = line
                 elif line.startswith('"Project-Id-Version'):
                     self.versionId = line
-                    self.potCreation = line
                 elif line.startswith('msgid "'):
                     inHeader = False
             if not inHeader:
