@@ -17,7 +17,7 @@ def main():
     translationsComplete = True
     for programName in os.listdir('../programs'):
         poPath = f'../programs/{programName}'
-        if not translations.main(poPath, app=programName):
+        if not translations.main(poPath, app=programName, json=True):
             translationsComplete = False
     return translationsComplete
 

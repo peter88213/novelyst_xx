@@ -6,12 +6,12 @@ License: GNU GPLv3 (https://www.gnu.org/licenses/gpl-3.0.en.html)
 """
 import sys
 import os
+import json
 from string import Template
 from datetime import datetime
 from settings import *
 
-POT_PATH = '../i18n'
-JSON_PATH = '../../PyWriter/i18n'
+JSON_DICT = '../dictionary/msg_dict.json'
 
 poHeader = '''\
 # ${app} Dictionary (English-${languageName})
@@ -42,6 +42,7 @@ class Translations:
     """
 
     def __init__(self, potPath, app=''):
+        self.lngFile = f'{JSON_DICT}'
         self.poFile = f'{potPath}/{languageCode}.po'
         self.potFile = f'{potPath}/messages.pot'
         self.msgDict = {}
@@ -78,6 +79,55 @@ class Translations:
                     msgCount += 1
             self.msgList.sort()
         print(f'{msgCount} entries read.')
+
+    def read_json(self):
+        """Read a JSON translation file and add the translations to msgDict.
+        
+        Return True in case of success.
+        Return False, if the file cannot be read. 
+        """
+        try:
+            with open(self.lngFile, 'r', encoding='utf-8') as f:
+                print(f'Reading "{self.lngFile}" ...')
+                msgDict = json.load(f)
+            for message in msgDict:
+                self.msgDict[message] = msgDict[message]
+            print(f'{len(self.msgDict)} translations total.')
+            return True
+
+        except Exception as ex:
+            print(ex)
+            return False
+
+    def write_json(self):
+        """Add translations to a JSON translation file.
+        
+        Create a backup file.
+        Return True in case of success.
+        Return False, if the file cannot be written. 
+        """
+        if os.path.isfile(self.lngFile):
+            os.replace(self.lngFile, f'{self.lngFile}.bak')
+            backedUp = True
+        else:
+            backedUp = False
+        try:
+            with open(self.lngFile, 'w', encoding='utf-8') as f:
+                print(f'Writing "{self.lngFile}" ...')
+                msgDict = {}
+                # dict for non-empty entries
+                for msg in self.msgDict:
+                    if self.msgDict[msg]:
+                        msgDict[msg] = self.msgDict[msg]
+                json.dump(msgDict, f, ensure_ascii=False, sort_keys=True, indent=2)
+                print(f'{len(self.msgDict)} translations written.')
+            return True
+
+        except Exception as ex:
+            if backedUp:
+                os.replace(f'{self.lngFile}.bak', self.lngFile)
+            print(f'ERROR: Cannot write file: "{self.lngFile}".\n{ex}')
+            return False
 
     def read_po(self):
         """Read the existing translations of the '.po' file.
@@ -174,7 +224,7 @@ class Translations:
         return message
 
 
-def main(potPath, app='', appVersion='unknown'):
+def main(potPath, app='', appVersion='unknown', json=False):
     """Update a '.po' translation file.
     
     - Add missing entries from the '.pot' template file.
@@ -182,9 +232,13 @@ def main(potPath, app='', appVersion='unknown'):
     Return True, if all messages have translations.
     Return False, if messages need to be translated. 
     """
-    translations = Translations(potPath, app)
+    translations = Translations(potPath, app=app)
+    if json:
+        translations.read_json()
     translations.read_pot()
     translations.read_po()
+    if json:
+        translations.write_json()
     if translations.write_po():
         return True
     else:
