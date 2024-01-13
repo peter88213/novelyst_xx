@@ -7,7 +7,7 @@ Language pack for [novelyst](https://peter88213.github.io/novelyst/).
 ## How to install the language pack
 
 1. Download the `novelyst_xx.zip` file.
-2. Unpack it and move the `i18n` directory tree to your *novelyst* installation directory. This may be `~/.pywriter/novelyst`. 
+2. Unpack it and move the `i18n/locale` directory tree to your *novelyst* installation directory. This may be `~/.pywriter/novelyst`. 
 
 ---
 
